@@ -24,7 +24,13 @@ const ArrowUpRight = ({ size = 18, className }: IconProps) => (
 );
 
 const ArrowDown = ({ size = 18 }: IconProps) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    aria-hidden="true"
+  >
     <path
       d="M12 5v14m-6-6 6 6 6-6"
       stroke="currentColor"
@@ -36,7 +42,13 @@ const ArrowDown = ({ size = 18 }: IconProps) => (
 );
 
 const Sun = ({ size = 16 }: IconProps) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    aria-hidden="true"
+  >
     <circle cx="12" cy="12" r="3.5" stroke="currentColor" strokeWidth="1.6" />
     <path
       d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"
@@ -48,7 +60,13 @@ const Sun = ({ size = 16 }: IconProps) => (
 );
 
 const Moon = ({ size = 15 }: IconProps) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    aria-hidden="true"
+  >
     <path
       d="M20 15.5A8.5 8.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"
       stroke="currentColor"
@@ -59,7 +77,13 @@ const Moon = ({ size = 15 }: IconProps) => (
 );
 
 const MenuIcon = ({ size = 20 }: IconProps) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    aria-hidden="true"
+  >
     <path
       d="M4 7h16M4 12h16M4 17h16"
       stroke="currentColor"
@@ -70,8 +94,19 @@ const MenuIcon = ({ size = 20 }: IconProps) => (
 );
 
 const CloseIcon = ({ size = 20 }: IconProps) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-    <path d="m6 6 12 12M18 6 6 18" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    aria-hidden="true"
+  >
+    <path
+      d="m6 6 12 12M18 6 6 18"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinecap="round"
+    />
   </svg>
 );
 
@@ -85,7 +120,14 @@ function GoldCursor() {
     const context = canvas.getContext("2d");
     if (!context) return;
 
-    type Particle = { x: number; y: number; vx: number; vy: number; life: number; size: number };
+    type Particle = {
+      x: number;
+      y: number;
+      vx: number;
+      vy: number;
+      life: number;
+      size: number;
+    };
     const particles: Particle[] = [];
     const pointer = { x: -100, y: -100, visible: false };
     let animationFrame = 0;
@@ -129,7 +171,13 @@ function GoldCursor() {
         }
         context.beginPath();
         context.fillStyle = `rgba(210, 174, 91, ${particle.life})`;
-        context.arc(particle.x, particle.y, particle.size * particle.life, 0, Math.PI * 2);
+        context.arc(
+          particle.x,
+          particle.y,
+          particle.size * particle.life,
+          0,
+          Math.PI * 2,
+        );
         context.fill();
       }
       if (pointer.visible) {
@@ -230,9 +278,15 @@ const certificates = [
 const trainingSlides = [
   ["Responsive Web Design", "Accessible, mobile-first interface development"],
   ["JavaScript Algorithms", "Data structures and problem-solving foundations"],
-  ["Student Leadership Summit", "Collaborative leadership and project planning"],
+  [
+    "Student Leadership Summit",
+    "Collaborative leadership and project planning",
+  ],
   ["UI/UX Design Workshop", "Research-led interface design and prototyping"],
-  ["Technology Conference", "Emerging tools, practices, and industry perspectives"],
+  [
+    "Technology Conference",
+    "Emerging tools, practices, and industry perspectives",
+  ],
 ];
 
 function ServiceSimulation({ type }: { type: number }) {
@@ -279,15 +333,21 @@ function ServiceSimulation({ type }: { type: number }) {
         aria-label="Animated quality assurance simulation"
       >
         <div className="scan-line" />
-        {["Responsive layout", "Keyboard access", "Performance", "Cross-browser"].map(
-          (test, index) => (
-            <div key={test} style={{ "--test-delay": `${index * 0.25}s` } as CSSProperties}>
-              <span>✓</span>
-              <strong>{test}</strong>
-              <small>Passed</small>
-            </div>
-          ),
-        )}
+        {[
+          "Responsive layout",
+          "Keyboard access",
+          "Performance",
+          "Cross-browser",
+        ].map((test, index) => (
+          <div
+            key={test}
+            style={{ "--test-delay": `${index * 0.25}s` } as CSSProperties}
+          >
+            <span>✓</span>
+            <strong>{test}</strong>
+            <small>Passed</small>
+          </div>
+        ))}
       </div>
     );
   }
@@ -301,7 +361,10 @@ function ServiceSimulation({ type }: { type: number }) {
           <i
             key={height}
             style={
-              { "--bar-height": `${height}%`, "--bar-delay": `${index * 0.1}s` } as CSSProperties
+              {
+                "--bar-height": `${height}%`,
+                "--bar-delay": `${index * 0.1}s`,
+              } as CSSProperties
             }
           />
         ))}
@@ -318,14 +381,17 @@ export default function Home() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [activeSection, setActiveSection] = useState("home");
   const [menuOpen, setMenuOpen] = useState(false);
-  const [selectedProject, setSelectedProject] = useState<(typeof projectData)[number] | null>(null);
+  const [selectedProject, setSelectedProject] = useState<
+    (typeof projectData)[number] | null
+  >(null);
   const [activeCertificate, setActiveCertificate] = useState(0);
   const [trainingSlide, setTrainingSlide] = useState(0);
   const [activeService, setActiveService] = useState<number | null>(null);
   const certificateDragStart = useRef<number | null>(null);
 
   useEffect(() => {
-    const saved = localStorage.getItem("portfolio-theme") as "light" | "dark" | null;
+    const saved = localStorage.getItem("portfolio-theme") as
+      "light" | "dark" | null;
     if (saved === "light" || saved === "dark") {
       setTheme(saved);
       document.documentElement.dataset.theme = saved;
@@ -389,7 +455,8 @@ export default function Home() {
 
   const changeSlide = (direction: number) => {
     setTrainingSlide(
-      (current) => (current + direction + trainingSlides.length) % trainingSlides.length,
+      (current) =>
+        (current + direction + trainingSlides.length) % trainingSlides.length,
     );
   };
 
@@ -418,7 +485,10 @@ export default function Home() {
           >
             <img src="/conie-lariego-logo.png" alt="CL — Conie Lariego" />
           </button>
-          <button className="back-link" onClick={() => setSelectedProject(null)}>
+          <button
+            className="back-link"
+            onClick={() => setSelectedProject(null)}
+          >
             ← Back to all projects
           </button>
           <button
@@ -431,7 +501,6 @@ export default function Home() {
         </header>
         <main className="project-detail">
           <div className="project-detail-copy scroll-reveal" data-reveal>
-            <p className="eyebrow">{selectedProject.type}</p>
             <h1>{selectedProject.title}</h1>
             <p className="project-detail-lead">{selectedProject.text}</p>
             <div className="project-facts">
@@ -459,12 +528,12 @@ export default function Home() {
             <p>Project experience simulation</p>
           </div>
           <section className="project-case-study scroll-reveal" data-reveal>
-            <p className="eyebrow">Case study preview</p>
             <h2>Designed to make complex tasks feel remarkably simple.</h2>
             <p>
-              This interactive project preview demonstrates the complete user journey and craft.
-              Features responsive design, state management, streamlined workflows, and high attention
-              to detail and accessibility across all screen sizes.
+              This interactive project preview demonstrates the complete user
+              journey and craft. Features responsive design, state management,
+              streamlined workflows, and high attention to detail and
+              accessibility across all screen sizes.
             </p>
           </section>
         </main>
@@ -484,11 +553,16 @@ export default function Home() {
           <img src="/conie-lariego-logo.png" alt="CL — Conie Lariego" />
         </button>
 
-        <nav className={menuOpen ? "main-nav open" : "main-nav"} aria-label="Main navigation">
+        <nav
+          className={menuOpen ? "main-nav open" : "main-nav"}
+          aria-label="Main navigation"
+        >
           {navItems.map((item) => (
             <button
               key={item.id}
-              className={activeSection === item.id ? "nav-link active" : "nav-link"}
+              className={
+                activeSection === item.id ? "nav-link active" : "nav-link"
+              }
               onClick={() => goTo(item.id)}
             >
               {item.label}
@@ -526,11 +600,15 @@ export default function Home() {
               <b className="name-spark" aria-hidden="true" />
             </h1>
             <p className="hero-description">
-              I create purposeful digital experiences where thoughtful design meets dependable
-              code—clean, responsive, and built around the people who use them.
+              I create purposeful digital experiences where thoughtful design
+              meets dependable code—clean, responsive, and built around the
+              people who use them.
             </p>
             <div className="hero-actions">
-              <button className="primary-button" onClick={() => goTo("projects")}>
+              <button
+                className="primary-button"
+                onClick={() => goTo("projects")}
+              >
                 Explore my projects <ArrowUpRight />
               </button>
               <button className="text-button" onClick={() => goTo("about")}>
@@ -560,7 +638,6 @@ export default function Home() {
 
         <section id="about" className="section about-section">
           <div className="section-heading scroll-reveal" data-reveal>
-            <p className="eyebrow">Get to know me</p>
             <h2 className="write-reveal">
               Curious by nature.
               <br />
@@ -581,18 +658,18 @@ export default function Home() {
             </div>
             <div className="about-story">
               <p className="lead">
-                I’m Conie Besinan Lariego, a Computer Engineering student and full-stack developer
-                who cares about the details.
+                I’m Conie Besinan Lariego, a Computer Engineering student and
+                full-stack developer who cares about the details.
               </p>
               <p>
-                I’m pursuing a Bachelor of Science in Computer Engineering at Cebu Technological
-                University–Danao Campus, where I’ve built a strong foundation in web development and
-                data analytics.
+                I’m pursuing a Bachelor of Science in Computer Engineering at
+                Cebu Technological University–Danao Campus, where I’ve built a
+                strong foundation in web development and data analytics.
               </p>
               <p>
-                I enjoy turning complex ideas into interfaces that feel simple. Whether I’m building
-                independently or alongside a team, I bring curiosity, care, and a commitment to
-                quality.
+                I enjoy turning complex ideas into interfaces that feel simple.
+                Whether I’m building independently or alongside a team, I bring
+                curiosity, care, and a commitment to quality.
               </p>
             </div>
             <div className="stats-panel">
@@ -632,7 +709,6 @@ export default function Home() {
 
         <section id="services" className="section services-section">
           <div className="section-heading scroll-reveal" data-reveal>
-            <p className="eyebrow">What I do</p>
             <h2 className="heading-slide">
               Ideas, thoughtfully
               <br />
@@ -643,7 +719,8 @@ export default function Home() {
           <div className="services-layout scroll-reveal" data-reveal>
             <div className="skill-intro">
               <p className="lead">
-                I combine technical craft with an empathetic, problem-solving mindset.
+                I combine technical craft with an empathetic, problem-solving
+                mindset.
               </p>
 
               <div className="skill-group">
@@ -663,7 +740,9 @@ export default function Home() {
               </div>
 
               <div className="skill-group">
-                <p className="skill-label technical-label">Programming Languages</p>
+                <p className="skill-label technical-label">
+                  Programming Languages
+                </p>
                 <div className="skills-list technical-skills">
                   {["JavaScript", "TypeScript", "Java"].map((skill) => (
                     <span key={skill}>{skill}</span>
@@ -672,18 +751,27 @@ export default function Home() {
               </div>
 
               <div className="skill-group">
-                <p className="skill-label technical-label">Web & Mobile Development</p>
+                <p className="skill-label technical-label">
+                  Web & Mobile Development
+                </p>
                 <div className="skills-list technical-skills">
-                  {["HTML", "CSS", "Tailwind CSS", "React", "Next.js", "React + Vite"].map(
-                    (skill) => (
-                      <span key={skill}>{skill}</span>
-                    ),
-                  )}
+                  {[
+                    "HTML",
+                    "CSS",
+                    "Tailwind CSS",
+                    "React",
+                    "Next.js",
+                    "React + Vite",
+                  ].map((skill) => (
+                    <span key={skill}>{skill}</span>
+                  ))}
                 </div>
               </div>
 
               <div className="skill-group">
-                <p className="skill-label technical-label">Databases & Version Control</p>
+                <p className="skill-label technical-label">
+                  Databases & Version Control
+                </p>
                 <div className="skills-list technical-skills">
                   {["MySQL", "Supabase", "Git/GitHub"].map((skill) => (
                     <span key={skill}>{skill}</span>
@@ -692,7 +780,9 @@ export default function Home() {
               </div>
 
               <div className="skill-group">
-                <p className="skill-label technical-label">AI & Development Tools</p>
+                <p className="skill-label technical-label">
+                  AI & Development Tools
+                </p>
                 <div className="skills-list technical-skills">
                   {[
                     "Google Antigravity",
@@ -709,7 +799,9 @@ export default function Home() {
             </div>
             <div className="service-list">
               <article
-                className={activeService === 0 ? "service-card active" : "service-card"}
+                className={
+                  activeService === 0 ? "service-card active" : "service-card"
+                }
                 onClick={() => setActiveService(activeService === 0 ? null : 0)}
                 onKeyDown={(event) => {
                   if (event.key === "Enter" || event.key === " ") {
@@ -723,18 +815,19 @@ export default function Home() {
               >
                 <span className="service-index">01</span>
                 <div>
-                  <p className="eyebrow">Design & development</p>
                   <h3>Websites</h3>
                   <p>
-                    Responsive, user-friendly websites that balance elegant interfaces with robust
-                    functionality.
+                    Responsive, user-friendly websites that balance elegant
+                    interfaces with robust functionality.
                   </p>
                 </div>
                 <ArrowUpRight size={20} />
                 {activeService === 0 && <ServiceSimulation type={0} />}
               </article>
               <article
-                className={activeService === 1 ? "service-card active" : "service-card"}
+                className={
+                  activeService === 1 ? "service-card active" : "service-card"
+                }
                 onClick={() => setActiveService(activeService === 1 ? null : 1)}
                 onKeyDown={(event) => {
                   if (event.key === "Enter" || event.key === " ") {
@@ -748,18 +841,19 @@ export default function Home() {
               >
                 <span className="service-index">02</span>
                 <div>
-                  <p className="eyebrow">Quality assurance</p>
                   <h3>QA Testing</h3>
                   <p>
-                    Methodical testing that catches issues early and keeps every experience polished
-                    and dependable.
+                    Methodical testing that catches issues early and keeps every
+                    experience polished and dependable.
                   </p>
                 </div>
                 <ArrowUpRight size={20} />
                 {activeService === 1 && <ServiceSimulation type={1} />}
               </article>
               <article
-                className={activeService === 2 ? "service-card active" : "service-card"}
+                className={
+                  activeService === 2 ? "service-card active" : "service-card"
+                }
                 onClick={() => setActiveService(activeService === 2 ? null : 2)}
                 onKeyDown={(event) => {
                   if (event.key === "Enter" || event.key === " ") {
@@ -773,11 +867,10 @@ export default function Home() {
               >
                 <span className="service-index">03</span>
                 <div>
-                  <p className="eyebrow">Insight & clarity</p>
                   <h3>Data Analytics</h3>
                   <p>
-                    Transforming raw information into clear, useful insights that support better
-                    decisions.
+                    Transforming raw information into clear, useful insights
+                    that support better decisions.
                   </p>
                 </div>
                 <ArrowUpRight size={20} />
@@ -789,7 +882,6 @@ export default function Home() {
 
         <section id="projects" className="section projects-section">
           <div className="section-heading scroll-reveal" data-reveal>
-            <p className="eyebrow">Projects</p>
             <h2 className="heading-scale">
               Projects built with
               <br />
@@ -856,7 +948,9 @@ export default function Home() {
                 <button
                   key={certificate.title}
                   className={
-                    activeCertificate === index ? "certificate-paper active" : "certificate-paper"
+                    activeCertificate === index
+                      ? "certificate-paper active"
+                      : "certificate-paper"
                   }
                   style={{ "--card-index": index } as CSSProperties}
                   onPointerDown={() => setActiveCertificate(index)}
@@ -894,15 +988,20 @@ export default function Home() {
           <div className="training-carousel scroll-reveal" data-reveal>
             <div className="carousel-heading">
               <div>
-                <p className="eyebrow">Professional growth</p>
                 <h3>Workshops, events & training</h3>
               </div>
               <div className="carousel-controls">
-                <button onClick={() => changeSlide(-1)} aria-label="Previous training">
+                <button
+                  onClick={() => changeSlide(-1)}
+                  aria-label="Previous training"
+                >
                   ←
                 </button>
                 <span>0{trainingSlide + 1} / 05</span>
-                <button onClick={() => changeSlide(1)} aria-label="Next training">
+                <button
+                  onClick={() => changeSlide(1)}
+                  aria-label="Next training"
+                >
                   →
                 </button>
               </div>
@@ -913,7 +1012,10 @@ export default function Home() {
                 style={{ transform: `translateX(-${trainingSlide * 100}%)` }}
               >
                 {trainingSlides.map(([title, description], index) => (
-                  <article className={`training-slide slide-${index + 1}`} key={title}>
+                  <article
+                    className={`training-slide slide-${index + 1}`}
+                    key={title}
+                  >
                     <span>Training archive · 0{index + 1}</span>
                     <div className="slide-art">
                       <b>{String(index + 1).padStart(2, "0")}</b>
