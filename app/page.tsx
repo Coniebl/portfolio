@@ -1,6 +1,16 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
+import {
+  certificates,
+  navItems,
+  profile,
+  projectData,
+  services,
+  skillGroups,
+  timelineItems,
+  trainingSlides,
+} from "@/data/portfolio";
 
 type IconProps = { size?: number; className?: string };
 
@@ -110,11 +120,74 @@ const CloseIcon = ({ size = 20 }: IconProps) => (
   </svg>
 );
 
+const CopyIcon = ({ size = 14 }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    aria-hidden="true"
+  >
+    <rect
+      x="9"
+      y="9"
+      width="11"
+      height="11"
+      rx="1.5"
+      stroke="currentColor"
+      strokeWidth="1.7"
+    />
+    <path
+      d="M5 15H4a1.5 1.5 0 0 1-1.5-1.5v-9A1.5 1.5 0 0 1 4 3h9a1.5 1.5 0 0 1 1.5 1.5v1"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
+const CheckIcon = ({ size = 14 }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    aria-hidden="true"
+  >
+    <path
+      d="m5 12.5 4.5 4.5L19 7.5"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const DownloadIcon = ({ size = 15 }: IconProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    aria-hidden="true"
+  >
+    <path
+      d="M12 4v11m0 0-4-4m4 4 4-4M5 19h14"
+      stroke="currentColor"
+      strokeWidth="1.7"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
 function GoldCursor() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     if (!window.matchMedia("(pointer: fine)").matches) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const context = canvas.getContext("2d");
@@ -211,84 +284,6 @@ function GoldCursor() {
   return <canvas ref={canvasRef} className="gold-cursor" aria-hidden="true" />;
 }
 
-const navItems = [
-  { id: "home", label: "Home" },
-  { id: "about", label: "Get to know me" },
-  { id: "services", label: "What I do" },
-  { id: "projects", label: "Projects" },
-  { id: "trainings", label: "Trainings" },
-];
-
-const projectData = [
-  {
-    index: "01",
-    slug: "metube",
-    title: "MeTube",
-    type: "Full-stack platform",
-    text: "A responsive video sharing experience with thoughtful content discovery, account flows, and a clean viewing interface.",
-    tags: ["React", "Node.js", "Database"],
-    year: "2025",
-    role: "Full-stack developer",
-  },
-  {
-    index: "02",
-    slug: "bookease",
-    title: "BookEase",
-    type: "Hotel booking system",
-    text: "An intuitive reservation system that simplifies room discovery, availability checks, and booking management.",
-    tags: ["UI/UX", "Full Stack", "Responsive"],
-    year: "2024",
-    role: "Product designer & developer",
-  },
-  {
-    index: "03",
-    slug: "recipebook",
-    title: "RecipeBook",
-    type: "Web application",
-    text: "A warm, accessible recipe collection made for effortless browsing, saving, and sharing in the kitchen.",
-    tags: ["Frontend", "API", "Product Design"],
-    year: "2024",
-    role: "Frontend developer",
-  },
-];
-
-const certificates = [
-  {
-    year: "2025",
-    title: "Full-Stack Web Development",
-    issuer: "Developer training & practical application",
-  },
-  {
-    year: "2024",
-    title: "Data Analytics Fundamentals",
-    issuer: "Data processing, visualization & insights",
-  },
-  {
-    year: "2024",
-    title: "Quality Assurance Essentials",
-    issuer: "Testing principles & quality workflows",
-  },
-  {
-    year: "2024",
-    title: "Responsive Web Development",
-    issuer: "Mobile-first & accessible interface design",
-  },
-];
-
-const trainingSlides = [
-  ["Responsive Web Design", "Accessible, mobile-first interface development"],
-  ["JavaScript Algorithms", "Data structures and problem-solving foundations"],
-  [
-    "Student Leadership Summit",
-    "Collaborative leadership and project planning",
-  ],
-  ["UI/UX Design Workshop", "Research-led interface design and prototyping"],
-  [
-    "Technology Conference",
-    "Emerging tools, practices, and industry perspectives",
-  ],
-];
-
 function ServiceSimulation({ type }: { type: number }) {
   if (type === 0) {
     return (
@@ -380,6 +375,7 @@ function ServiceSimulation({ type }: { type: number }) {
 export default function Home() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [activeSection, setActiveSection] = useState("home");
+  const [hasScrolled, setHasScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<
     (typeof projectData)[number] | null
@@ -387,19 +383,45 @@ export default function Home() {
   const [activeCertificate, setActiveCertificate] = useState(0);
   const [trainingSlide, setTrainingSlide] = useState(0);
   const [activeService, setActiveService] = useState<number | null>(null);
+  const [copiedEmail, setCopiedEmail] = useState(false);
+  const [carouselPaused, setCarouselPaused] = useState(false);
+  const [activePhotoBySlide, setActivePhotoBySlide] = useState<
+    Record<number, number>
+  >({});
+  const [lightbox, setLightbox] = useState<{
+    title: string;
+    images: string[];
+    index: number;
+  } | null>(null);
   const certificateDragStart = useRef<number | null>(null);
 
   useEffect(() => {
     const saved = localStorage.getItem("portfolio-theme") as
-      "light" | "dark" | null;
-    if (saved === "light" || saved === "dark") {
-      setTheme(saved);
-      document.documentElement.dataset.theme = saved;
-    } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      setTheme("dark");
-      document.documentElement.dataset.theme = "dark";
-    }
+      | "light"
+      | "dark"
+      | null;
+    const resolved: "light" | "dark" =
+      saved === "light" || saved === "dark"
+        ? saved
+        : window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light";
+    document.documentElement.dataset.theme = resolved;
+    const frame = window.requestAnimationFrame(() => {
+      setTheme(resolved);
+    });
+    return () => window.cancelAnimationFrame(frame);
   }, []);
+
+  const copyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(profile.links.email);
+      setCopiedEmail(true);
+      window.setTimeout(() => setCopiedEmail(false), 2200);
+    } catch {
+      window.location.href = `mailto:${profile.links.email}`;
+    }
+  };
 
   const toggleTheme = () => {
     const nextTheme = theme === "light" ? "dark" : "light";
@@ -410,6 +432,7 @@ export default function Home() {
 
   useEffect(() => {
     const updateActiveSection = () => {
+      setHasScrolled(window.scrollY > 80);
       const marker = window.scrollY + 120;
       let current = "home";
       navItems.forEach(({ id }) => {
@@ -442,11 +465,52 @@ export default function Home() {
   }, [selectedProject]);
 
   useEffect(() => {
+    if (carouselPaused || lightbox) return;
+    const currentSlidePhotos = trainingSlides[trainingSlide]?.images.length ?? 1;
+    if (currentSlidePhotos <= 1) return;
+    const flipTimer = window.setInterval(() => {
+      setActivePhotoBySlide((prev) => ({
+        ...prev,
+        [trainingSlide]: ((prev[trainingSlide] ?? 0) + 1) % currentSlidePhotos,
+      }));
+    }, 2800);
+    return () => window.clearInterval(flipTimer);
+  }, [carouselPaused, lightbox, trainingSlide]);
+
+  useEffect(() => {
+    if (carouselPaused || lightbox) return;
     const timer = window.setInterval(() => {
       setTrainingSlide((current) => (current + 1) % trainingSlides.length);
-    }, 3200);
+    }, 11500);
     return () => window.clearInterval(timer);
-  }, []);
+  }, [carouselPaused, lightbox]);
+
+  useEffect(() => {
+    if (!lightbox) return;
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setLightbox(null);
+      } else if (event.key === "ArrowRight") {
+        setLightbox((curr) =>
+          curr
+            ? { ...curr, index: (curr.index + 1) % curr.images.length }
+            : null,
+        );
+      } else if (event.key === "ArrowLeft") {
+        setLightbox((curr) =>
+          curr
+            ? {
+                ...curr,
+                index:
+                  (curr.index - 1 + curr.images.length) % curr.images.length,
+              }
+            : null,
+        );
+      }
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [lightbox]);
 
   const goTo = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
@@ -513,28 +577,84 @@ export default function Home() {
                 <strong>{selectedProject.year}</strong>
               </div>
               <div>
-                <span>Focus</span>
+                <span>Stack</span>
                 <strong>{selectedProject.tags.join(" · ")}</strong>
               </div>
             </div>
+            <div className="project-detail-actions">
+              {selectedProject.liveUrl ? (
+                <a
+                  className="primary-button"
+                  href={selectedProject.liveUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Live demo <ArrowUpRight size={16} />
+                </a>
+              ) : (
+                <span className="secondary-button is-placeholder">
+                  Live demo · Coming soon
+                </span>
+              )}
+              {selectedProject.githubUrl ? (
+                <a
+                  className="secondary-button"
+                  href={selectedProject.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  View source <ArrowUpRight size={15} />
+                </a>
+              ) : (
+                <span className="secondary-button is-placeholder">
+                  Source code · Coming soon
+                </span>
+              )}
+            </div>
           </div>
           <div
-            className={`project-detail-visual visual-${selectedProject.index} scroll-reveal reveal-right`}
+            className={`project-detail-visual visual-${selectedProject.index}${selectedProject.image ? " has-image" : ""} scroll-reveal reveal-right`}
             data-reveal
           >
-            <span>Interactive project preview</span>
-            <strong>{selectedProject.title.slice(0, 1)}</strong>
-            <div className="project-lines" />
-            <p>Project experience simulation</p>
+            {selectedProject.image ? (
+              <img
+                src={selectedProject.image}
+                alt={`${selectedProject.title} website preview`}
+                className="project-detail-screenshot"
+              />
+            ) : (
+              <>
+                <span>Project preview · Placeholder</span>
+                <strong>{selectedProject.title.slice(0, 1)}</strong>
+                <div className="project-lines" />
+                <p>Screenshot coming soon</p>
+              </>
+            )}
           </div>
           <section className="project-case-study scroll-reveal" data-reveal>
-            <h2>Designed to make complex tasks feel remarkably simple.</h2>
-            <p>
-              This interactive project preview demonstrates the complete user
-              journey and craft. Features responsive design, state management,
-              streamlined workflows, and high attention to detail and
-              accessibility across all screen sizes.
-            </p>
+            <h2>{selectedProject.caseStudy.headline}</h2>
+            <div className="case-study-grid">
+              <div className="case-study-block">
+                <span>The Challenge</span>
+                <p>{selectedProject.caseStudy.challenge}</p>
+              </div>
+              <div className="case-study-block">
+                <span>The Solution</span>
+                <p>{selectedProject.caseStudy.solution}</p>
+              </div>
+            </div>
+            <div className="case-study-highlights">
+              <span>Key Engineering Highlights</span>
+              <ul>
+                {selectedProject.caseStudy.highlights.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+            <div className="case-study-outcome">
+              <span>Outcome</span>
+              <p>{selectedProject.caseStudy.outcome}</p>
+            </div>
           </section>
         </main>
       </div>
@@ -591,6 +711,10 @@ export default function Home() {
       <main>
         <section id="home" className="section hero-section">
           <div className="hero-copy reveal">
+            <p className="availability-pill">
+              <i aria-hidden="true" />
+              {profile.availability}
+            </p>
             <p className="hello">Hi! I am</p>
             <h1 className="hero-name">
               <span className="hero-name-text">
@@ -599,11 +723,8 @@ export default function Home() {
               </span>
               <b className="name-spark" aria-hidden="true" />
             </h1>
-            <p className="hero-description">
-              I create purposeful digital experiences where thoughtful design
-              meets dependable code—clean, responsive, and built around the
-              people who use them.
-            </p>
+            <p className="hero-role">{profile.roleHeadline}</p>
+            <p className="hero-description">{profile.heroSummary}</p>
             <div className="hero-actions">
               <button
                 className="primary-button"
@@ -611,8 +732,68 @@ export default function Home() {
               >
                 Explore my projects <ArrowUpRight />
               </button>
-              <button className="text-button" onClick={() => goTo("about")}>
-                Get to know me <ArrowDown />
+              {profile.links.resumeUrl ? (
+                <a
+                  className="secondary-button"
+                  href={profile.links.resumeUrl}
+                  download="Conie-Lariego-Resume.pdf"
+                >
+                  <DownloadIcon /> Download Resume
+                </a>
+              ) : (
+                <span
+                  className="secondary-button is-placeholder"
+                  title="Drop resume PDF into public/resume.pdf and update data/portfolio.ts"
+                >
+                  <DownloadIcon /> Resume (PDF soon)
+                </span>
+              )}
+            </div>
+            <div className="hero-social-row" aria-label="Quick contact links">
+              {profile.links.github ? (
+                <a
+                  href={profile.links.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  GitHub <ArrowUpRight size={13} />
+                </a>
+              ) : (
+                <span className="social-placeholder">GitHub · Adding soon</span>
+              )}
+              <span className="social-dot" aria-hidden="true">
+                ·
+              </span>
+              {profile.links.linkedin ? (
+                <a
+                  href={profile.links.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  LinkedIn <ArrowUpRight size={13} />
+                </a>
+              ) : (
+                <span className="social-placeholder">
+                  LinkedIn · Adding soon
+                </span>
+              )}
+              <span className="social-dot" aria-hidden="true">
+                ·
+              </span>
+              <button
+                type="button"
+                className="inline-copy-link"
+                onClick={copyEmail}
+              >
+                {copiedEmail ? (
+                  <>
+                    <CheckIcon size={13} /> Email copied
+                  </>
+                ) : (
+                  <>
+                    <CopyIcon size={13} /> {profile.links.email}
+                  </>
+                )}
               </button>
             </div>
           </div>
@@ -630,10 +811,26 @@ export default function Home() {
               <div className="portrait-orbit" />
             </div>
             <div className="portrait-caption">
-              <span>Portrait · 2025</span>
-              <span>Based in Cebu, PH</span>
+              <span>Portrait · {profile.portraitYear}</span>
+              <span>
+                Based in {profile.location} ({profile.timezone})
+              </span>
             </div>
           </div>
+
+          <button
+            type="button"
+            className={
+              hasScrolled || activeSection !== "home"
+                ? "hero-scroll-cue is-hidden"
+                : "hero-scroll-cue"
+            }
+            onClick={() => goTo("about")}
+            aria-hidden={hasScrolled || activeSection !== "home"}
+            tabIndex={hasScrolled || activeSection !== "home" ? -1 : 0}
+          >
+            Get to know me <ArrowDown size={15} />
+          </button>
         </section>
 
         <section id="about" className="section about-section">
@@ -657,53 +854,72 @@ export default function Home() {
               </div>
             </div>
             <div className="about-story">
-              <p className="lead">
-                I’m Conie Besinan Lariego, a Computer Engineering student and
-                full-stack developer who cares about the details.
-              </p>
-              <p>
-                I’m pursuing a Bachelor of Science in Computer Engineering at
-                Cebu Technological University–Danao Campus, where I’ve built a
-                strong foundation in web development and data analytics.
-              </p>
-              <p>
-                I enjoy turning complex ideas into interfaces that feel simple.
-                Whether I’m building independently or alongside a team, I bring
-                curiosity, care, and a commitment to quality.
-              </p>
+              <p className="lead">{profile.aboutLead}</p>
+              {profile.aboutParagraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
             </div>
             <div className="stats-panel">
-              <div>
-                <strong>10+</strong>
-                <span>
-                  Projects
-                  <br />
-                  completed
-                </span>
-              </div>
-              <div>
-                <strong>4</strong>
-                <span>
-                  Professional
-                  <br />
-                  certifications
-                </span>
-              </div>
-              <div>
-                <strong>4th</strong>
-                <span>
-                  Year level
-                  <br />
-                  BS CpE
-                </span>
-              </div>
+              {profile.stats.map((stat) => (
+                <div key={stat.lines.join("-")}>
+                  <strong>{stat.value}</strong>
+                  <span>
+                    {stat.lines[0]}
+                    <br />
+                    {stat.lines[1]}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
 
           <div className="recognition-row scroll-reveal" data-reveal>
-            <span>Consistent Dean’s Lister</span>
-            <span>DOST Scholar</span>
-            <span>Student Leader</span>
+            {profile.recognitions.map((item) => (
+              <div className="recognition-card" key={item.title}>
+                <strong>{item.title}</strong>
+                <small>{item.detail}</small>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section id="experience" className="section experience-section">
+          <div className="section-heading scroll-reveal" data-reveal>
+            <h2 className="heading-slide">
+              Education, leadership
+              <br />
+              <em>&amp; hands-on growth.</em>
+            </h2>
+          </div>
+
+          <div className="timeline-list scroll-reveal" data-reveal>
+            {timelineItems.map((item) => (
+              <article
+                key={`${item.category}-${item.title}`}
+                className={
+                  item.isPlaceholder
+                    ? "timeline-item is-placeholder"
+                    : "timeline-item"
+                }
+              >
+                <div className="timeline-meta">
+                  <span className="timeline-category">{item.category}</span>
+                  <span className="timeline-period">{item.period}</span>
+                </div>
+                <div className="timeline-body">
+                  <h3>{item.title}</h3>
+                  <p className="timeline-org">
+                    {item.organization}
+                    {item.location ? ` · ${item.location}` : ""}
+                  </p>
+                  <ul className="timeline-highlights">
+                    {item.highlights.map((bullet) => (
+                      <li key={bullet}>{bullet}</li>
+                    ))}
+                  </ul>
+                </div>
+              </article>
+            ))}
           </div>
         </section>
 
@@ -723,159 +939,64 @@ export default function Home() {
                 mindset.
               </p>
 
-              <div className="skill-group">
-                <p className="skill-label">Core strengths</p>
-                <div className="skills-list">
-                  {[
-                    "Problem solving",
-                    "Critical thinking",
-                    "Collaboration",
-                    "Detail-oriented",
-                    "Adaptability",
-                    "Time management",
-                  ].map((skill) => (
-                    <span key={skill}>{skill}</span>
-                  ))}
+              {skillGroups.map((group) => (
+                <div className="skill-group" key={group.label}>
+                  <p
+                    className={
+                      group.technical
+                        ? "skill-label technical-label"
+                        : "skill-label"
+                    }
+                  >
+                    {group.label}
+                  </p>
+                  <div
+                    className={
+                      group.technical
+                        ? "skills-list technical-skills"
+                        : "skills-list"
+                    }
+                  >
+                    {group.items.map((skill) => (
+                      <span key={skill}>{skill}</span>
+                    ))}
+                  </div>
                 </div>
-              </div>
-
-              <div className="skill-group">
-                <p className="skill-label technical-label">
-                  Programming Languages
-                </p>
-                <div className="skills-list technical-skills">
-                  {["JavaScript", "TypeScript", "Java"].map((skill) => (
-                    <span key={skill}>{skill}</span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="skill-group">
-                <p className="skill-label technical-label">
-                  Web & Mobile Development
-                </p>
-                <div className="skills-list technical-skills">
-                  {[
-                    "HTML",
-                    "CSS",
-                    "Tailwind CSS",
-                    "React",
-                    "Next.js",
-                    "React + Vite",
-                  ].map((skill) => (
-                    <span key={skill}>{skill}</span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="skill-group">
-                <p className="skill-label technical-label">
-                  Databases & Version Control
-                </p>
-                <div className="skills-list technical-skills">
-                  {["MySQL", "Supabase", "Git/GitHub"].map((skill) => (
-                    <span key={skill}>{skill}</span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="skill-group">
-                <p className="skill-label technical-label">
-                  AI & Development Tools
-                </p>
-                <div className="skills-list technical-skills">
-                  {[
-                    "Google Antigravity",
-                    "Google Flow",
-                    "HeyGen",
-                    "Figma",
-                    "Microsoft Applications",
-                    "PowerBI",
-                  ].map((skill) => (
-                    <span key={skill}>{skill}</span>
-                  ))}
-                </div>
-              </div>
+              ))}
             </div>
             <div className="service-list">
-              <article
-                className={
-                  activeService === 0 ? "service-card active" : "service-card"
-                }
-                onClick={() => setActiveService(activeService === 0 ? null : 0)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    setActiveService(activeService === 0 ? null : 0);
+              {services.map((service, index) => (
+                <article
+                  key={service.index}
+                  className={
+                    activeService === index
+                      ? "service-card active"
+                      : "service-card"
                   }
-                }}
-                role="button"
-                tabIndex={0}
-                aria-expanded={activeService === 0}
-              >
-                <span className="service-index">01</span>
-                <div>
-                  <h3>Websites</h3>
-                  <p>
-                    Responsive, user-friendly websites that balance elegant
-                    interfaces with robust functionality.
-                  </p>
-                </div>
-                <ArrowUpRight size={20} />
-                {activeService === 0 && <ServiceSimulation type={0} />}
-              </article>
-              <article
-                className={
-                  activeService === 1 ? "service-card active" : "service-card"
-                }
-                onClick={() => setActiveService(activeService === 1 ? null : 1)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    setActiveService(activeService === 1 ? null : 1);
+                  onClick={() =>
+                    setActiveService(activeService === index ? null : index)
                   }
-                }}
-                role="button"
-                tabIndex={0}
-                aria-expanded={activeService === 1}
-              >
-                <span className="service-index">02</span>
-                <div>
-                  <h3>QA Testing</h3>
-                  <p>
-                    Methodical testing that catches issues early and keeps every
-                    experience polished and dependable.
-                  </p>
-                </div>
-                <ArrowUpRight size={20} />
-                {activeService === 1 && <ServiceSimulation type={1} />}
-              </article>
-              <article
-                className={
-                  activeService === 2 ? "service-card active" : "service-card"
-                }
-                onClick={() => setActiveService(activeService === 2 ? null : 2)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    setActiveService(activeService === 2 ? null : 2);
-                  }
-                }}
-                role="button"
-                tabIndex={0}
-                aria-expanded={activeService === 2}
-              >
-                <span className="service-index">03</span>
-                <div>
-                  <h3>Data Analytics</h3>
-                  <p>
-                    Transforming raw information into clear, useful insights
-                    that support better decisions.
-                  </p>
-                </div>
-                <ArrowUpRight size={20} />
-                {activeService === 2 && <ServiceSimulation type={2} />}
-              </article>
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      setActiveService(activeService === index ? null : index);
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  aria-expanded={activeService === index}
+                >
+                  <span className="service-index">{service.index}</span>
+                  <div>
+                    <h3>{service.title}</h3>
+                    <p>{service.description}</p>
+                  </div>
+                  <ArrowUpRight size={20} />
+                  {activeService === index && (
+                    <ServiceSimulation type={service.simulationType} />
+                  )}
+                </article>
+              ))}
             </div>
           </div>
         </section>
@@ -897,16 +1018,40 @@ export default function Home() {
                   setSelectedProject(project);
                   window.scrollTo({ top: 0, behavior: "smooth" });
                 }}
-                aria-label={`View ${project.title} project`}
+                aria-label={`View ${project.title} case study`}
               >
-                <div className={`project-visual visual-${project.index}`}>
-                  <span>{project.index}</span>
-                  <strong>{project.title.slice(0, 1)}</strong>
-                  <div className="project-lines" />
+                <div
+                  className={`project-visual visual-${project.index}${project.logo ? " has-logo" : ""}`}
+                >
+                  {project.logo ? (
+                    <>
+                      <span>{project.index}</span>
+                      <img
+                        src={project.logo}
+                        alt={`${project.title} logo`}
+                        className="project-logo-fill"
+                      />
+                    </>
+                  ) : project.image ? (
+                    <img
+                      src={project.image}
+                      alt={`${project.title} preview`}
+                      className="project-screenshot"
+                    />
+                  ) : (
+                    <>
+                      <span>{project.index}</span>
+                      <strong>{project.title.slice(0, 1)}</strong>
+                      <div className="project-lines" />
+                    </>
+                  )}
                 </div>
                 <div className="project-meta">
                   <span>{project.type}</span>
-                  <span>{project.index} / 03</span>
+                  <span>
+                    {project.index} /{" "}
+                    {String(projectData.length).padStart(2, "0")}
+                  </span>
                 </div>
                 <h3>{project.title}</h3>
                 <p>{project.text}</p>
@@ -916,10 +1061,25 @@ export default function Home() {
                   ))}
                 </div>
                 <span className="view-project">
-                  View project <ArrowUpRight size={14} />
+                  Read case study <ArrowUpRight size={14} />
                 </span>
               </button>
             ))}
+          </div>
+          <div className="projects-more scroll-reveal" data-reveal>
+            {profile.links.github ? (
+              <a
+                href={profile.links.github}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Explore all 10+ projects on GitHub <ArrowUpRight size={15} />
+              </a>
+            ) : (
+              <span>
+                More projects &amp; GitHub repositories link coming soon
+              </span>
+            )}
           </div>
         </section>
 
@@ -967,28 +1127,54 @@ export default function Home() {
             </div>
             <div className="certificate-list">
               {certificates.map((certificate, index) => (
-                <button
+                <div
                   key={certificate.title}
-                  className={activeCertificate === index ? "active" : ""}
-                  onMouseEnter={() => setActiveCertificate(index)}
-                  onFocus={() => setActiveCertificate(index)}
-                  onClick={() => setActiveCertificate(index)}
+                  className={
+                    activeCertificate === index
+                      ? "certificate-row active"
+                      : "certificate-row"
+                  }
                 >
-                  <span>0{index + 1}</span>
-                  <div>
-                    <strong>{certificate.title}</strong>
-                    <small>{certificate.issuer}</small>
-                  </div>
-                  <em>{certificate.year}</em>
-                </button>
+                  <button
+                    className={activeCertificate === index ? "active" : ""}
+                    onMouseEnter={() => setActiveCertificate(index)}
+                    onFocus={() => setActiveCertificate(index)}
+                    onClick={() => setActiveCertificate(index)}
+                  >
+                    <span>0{index + 1}</span>
+                    <div>
+                      <strong>{certificate.title}</strong>
+                      <small>{certificate.summary}</small>
+                      <small className="certificate-issuer">
+                        {certificate.issuer}
+                      </small>
+                    </div>
+                    <em>{certificate.year}</em>
+                  </button>
+                  {certificate.credentialUrl && (
+                    <a
+                      className="certificate-verify"
+                      href={certificate.credentialUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Verify credential <ArrowUpRight size={13} />
+                    </a>
+                  )}
+                </div>
               ))}
             </div>
           </div>
 
-          <div className="training-carousel scroll-reveal" data-reveal>
+          <div
+            className="training-carousel scroll-reveal"
+            data-reveal
+            onMouseEnter={() => setCarouselPaused(true)}
+            onMouseLeave={() => setCarouselPaused(false)}
+          >
             <div className="carousel-heading">
               <div>
-                <h3>Workshops, events & training</h3>
+                <h3>Workshops, events &amp; training</h3>
               </div>
               <div className="carousel-controls">
                 <button
@@ -997,7 +1183,10 @@ export default function Home() {
                 >
                   ←
                 </button>
-                <span>0{trainingSlide + 1} / 05</span>
+                <span>
+                  {String(trainingSlide + 1).padStart(2, "0")} /{" "}
+                  {String(trainingSlides.length).padStart(2, "0")}
+                </span>
                 <button
                   onClick={() => changeSlide(1)}
                   aria-label="Next training"
@@ -1011,31 +1200,126 @@ export default function Home() {
                 className="carousel-track"
                 style={{ transform: `translateX(-${trainingSlide * 100}%)` }}
               >
-                {trainingSlides.map(([title, description], index) => (
-                  <article
-                    className={`training-slide slide-${index + 1}`}
-                    key={title}
-                  >
-                    <span>Training archive · 0{index + 1}</span>
-                    <div className="slide-art">
-                      <b>{String(index + 1).padStart(2, "0")}</b>
-                      <i />
-                    </div>
-                    <div>
-                      <h4>{title}</h4>
-                      <p>{description}</p>
-                    </div>
-                  </article>
-                ))}
+                {trainingSlides.map((slide, index) => {
+                  const activeIdx =
+                    (activePhotoBySlide[index] ?? 0) % slide.images.length;
+                  const activePhoto = slide.images[activeIdx];
+                  const hasMultiple = slide.images.length > 1;
+                  const allSrcs = slide.images.map((item) => item.src);
+
+                  return (
+                    <article
+                      className={`training-slide has-gallery slide-${(index % 5) + 1}`}
+                      key={slide.title}
+                    >
+                      <div
+                        className={
+                          hasMultiple
+                            ? "training-spotlight-layout"
+                            : "training-spotlight-layout single-photo"
+                        }
+                      >
+                        <button
+                          type="button"
+                          className="spotlight-stage"
+                          onClick={() =>
+                            setLightbox({
+                              title: slide.title,
+                              images: allSrcs,
+                              index: activeIdx,
+                            })
+                          }
+                          aria-label={`Expand ${slide.title} photo ${activeIdx + 1} of ${slide.images.length}`}
+                        >
+                          <img
+                            src={activePhoto.src}
+                            alt=""
+                            aria-hidden="true"
+                            className="spotlight-backdrop"
+                          />
+                          <img
+                            key={activePhoto.src}
+                            src={activePhoto.src}
+                            alt={`${slide.title} — photo ${activeIdx + 1}`}
+                            className="spotlight-img"
+                          />
+                          <span className="spotlight-counter">
+                            {String(activeIdx + 1).padStart(2, "0")} /{" "}
+                            {String(slide.images.length).padStart(2, "0")}
+                          </span>
+                        </button>
+
+                        {hasMultiple && (
+                          <div
+                            className="spotlight-thumbs"
+                            role="tablist"
+                            aria-label={`${slide.title} photos`}
+                          >
+                            {slide.images.map((photo, imgIndex) => (
+                              <button
+                                key={photo.src}
+                                type="button"
+                                role="tab"
+                                aria-selected={activeIdx === imgIndex}
+                                className={
+                                  activeIdx === imgIndex
+                                    ? "spotlight-thumb active"
+                                    : "spotlight-thumb"
+                                }
+                                onMouseEnter={() =>
+                                  setActivePhotoBySlide((prev) => ({
+                                    ...prev,
+                                    [index]: imgIndex,
+                                  }))
+                                }
+                                onClick={() =>
+                                  setActivePhotoBySlide((prev) => ({
+                                    ...prev,
+                                    [index]: imgIndex,
+                                  }))
+                                }
+                                aria-label={`Focus ${slide.title} photo ${imgIndex + 1}`}
+                              >
+                                <img
+                                  src={photo.src}
+                                  alt=""
+                                  style={{
+                                    objectPosition: photo.position ?? "center",
+                                  }}
+                                  loading="lazy"
+                                />
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="training-slide-copy">
+                        <span className="training-meta-tag">
+                          {slide.organizer} · {slide.year}
+                        </span>
+                        <h4>{slide.title}</h4>
+                        <p>{slide.description}</p>
+                        <small className="training-photo-hint">
+                          {slide.images.length}{" "}
+                          {slide.images.length === 1 ? "photo" : "photos"} ·{" "}
+                          {hasMultiple
+                            ? "Hover or tap thumbnails · Click photo to expand"
+                            : "Click photo to expand"}
+                        </small>
+                      </div>
+                    </article>
+                  );
+                })}
               </div>
             </div>
             <div className="carousel-dots">
-              {trainingSlides.map(([title], index) => (
+              {trainingSlides.map((slide, index) => (
                 <button
-                  key={title}
+                  key={slide.title}
                   className={trainingSlide === index ? "active" : ""}
                   onClick={() => setTrainingSlide(index)}
-                  aria-label={`Show ${title}`}
+                  aria-label={`Show ${slide.title}`}
                 />
               ))}
             </div>
@@ -1043,19 +1327,159 @@ export default function Home() {
         </section>
       </main>
 
+      {lightbox && (
+        <div
+          className="lightbox-overlay"
+          role="dialog"
+          aria-modal="true"
+          aria-label={`${lightbox.title} photo gallery`}
+          onClick={() => setLightbox(null)}
+        >
+          <div
+            className="lightbox-content"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="lightbox-header">
+              <div>
+                <strong>{lightbox.title}</strong>
+                <span>
+                  {lightbox.index + 1} / {lightbox.images.length}
+                </span>
+              </div>
+              <button
+                type="button"
+                className="lightbox-close"
+                onClick={() => setLightbox(null)}
+                aria-label="Close photo viewer"
+              >
+                <CloseIcon size={18} />
+              </button>
+            </div>
+            <div className="lightbox-stage">
+              {lightbox.images.length > 1 && (
+                <button
+                  type="button"
+                  className="lightbox-nav prev"
+                  onClick={() =>
+                    setLightbox((curr) =>
+                      curr
+                        ? {
+                            ...curr,
+                            index:
+                              (curr.index - 1 + curr.images.length) %
+                              curr.images.length,
+                          }
+                        : null,
+                    )
+                  }
+                  aria-label="Previous photo"
+                >
+                  ←
+                </button>
+              )}
+              <img
+                src={lightbox.images[lightbox.index]}
+                alt={`${lightbox.title} — photo ${lightbox.index + 1}`}
+              />
+              {lightbox.images.length > 1 && (
+                <button
+                  type="button"
+                  className="lightbox-nav next"
+                  onClick={() =>
+                    setLightbox((curr) =>
+                      curr
+                        ? {
+                            ...curr,
+                            index: (curr.index + 1) % curr.images.length,
+                          }
+                        : null,
+                    )
+                  }
+                  aria-label="Next photo"
+                >
+                  →
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       <footer>
-        <div className="scroll-reveal" data-reveal>
+        <div className="footer-intro scroll-reveal" data-reveal>
+          <p className="footer-availability">{profile.availability}</p>
           <h2>
             Let’s create something
             <br />
             <em>meaningful together.</em>
           </h2>
         </div>
-        <a className="contact-link" href="mailto:hello@conielariego.com">
-          Start a conversation <ArrowUpRight size={20} />
-        </a>
+        <div className="footer-contact">
+          <a
+            className="contact-link"
+            href={`mailto:${profile.links.email}`}
+          >
+            Start a conversation <ArrowUpRight size={20} />
+          </a>
+          <div className="footer-email-row">
+            <span>{profile.links.email}</span>
+            <button
+              type="button"
+              className="copy-email-btn"
+              onClick={copyEmail}
+              aria-label="Copy email address"
+            >
+              {copiedEmail ? (
+                <>
+                  <CheckIcon size={13} /> Copied
+                </>
+              ) : (
+                <>
+                  <CopyIcon size={13} /> Copy email
+                </>
+              )}
+            </button>
+          </div>
+          <div className="footer-social-links">
+            {profile.links.linkedin ? (
+              <a
+                href={profile.links.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                LinkedIn <ArrowUpRight size={13} />
+              </a>
+            ) : (
+              <span className="social-placeholder">LinkedIn (soon)</span>
+            )}
+            {profile.links.github ? (
+              <a
+                href={profile.links.github}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                GitHub <ArrowUpRight size={13} />
+              </a>
+            ) : (
+              <span className="social-placeholder">GitHub (soon)</span>
+            )}
+            {profile.links.resumeUrl ? (
+              <a
+                href={profile.links.resumeUrl}
+                download="Conie-Lariego-Resume.pdf"
+              >
+                Resume PDF <DownloadIcon size={13} />
+              </a>
+            ) : (
+              <span className="social-placeholder">Resume PDF (soon)</span>
+            )}
+          </div>
+        </div>
         <div className="footer-bottom">
-          <span>© 2025 Conie Lariego</span>
+          <span>
+            © {new Date().getFullYear()} {profile.displayName} ·{" "}
+            {profile.location}
+          </span>
           <button onClick={() => goTo("home")}>Back to top ↑</button>
         </div>
       </footer>
